@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 
 // ── Configuration ─────────────────────────────────────────────────────────────
 // AUTH_PORT is set by docker-compose from AUTH_SERVICE_PORT in .env (default: 9000)
-const PORT = parseInt(process.env.AUTH_PORT ?? '9000', 10);
+const PORT = parseInt(process.env.AUTH_PORT ?? process.env.AUTH_SERVICE_PORT ?? '9000', 10);
 const USERNAME = process.env.AUTH_USERNAME ?? '';
 const PASSWORD_HASH = process.env.AUTH_PASSWORD_HASH ?? '';
 const COOKIE_SECRET = process.env.COOKIE_SECRET ?? '';

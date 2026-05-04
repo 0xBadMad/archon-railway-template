@@ -83,8 +83,12 @@ TELEGRAM_BOT_TOKEN=<optional>
 
 Set these on `archon-auth`:
 
+> Railway note: paste the bcrypt hash exactly as generated. Do **not** escape `$` as `$$`; that escaping is only for Docker Compose.
+
+
 ```bash
 AUTH_PORT=9000
+# AUTH_SERVICE_PORT=9000 also works, but AUTH_PORT is preferred on Railway.
 AUTH_USERNAME=${{archon-app.AUTH_USERNAME}}
 AUTH_PASSWORD_HASH=${{archon-app.AUTH_PASSWORD_HASH}}
 COOKIE_SECRET=${{archon-app.COOKIE_SECRET}}
