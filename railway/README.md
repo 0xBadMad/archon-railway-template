@@ -137,6 +137,8 @@ If the app logs volume permission errors, set `RAILWAY_RUN_UID=0` on `archon-app
 
 Archon selects PostgreSQL when `DATABASE_URL` is set. Without it, the app falls back to SQLite; do not omit `DATABASE_URL` on Railway.
 
+The image includes an empty `/app/.env` so Railway variables remain the source of truth without triggering a misleading missing-file warning. Do not commit real secrets into `.env`; use Railway variables.
+
 The upstream Docker Compose Postgres service auto-runs `migrations/000_combined.sql` only because Compose mounts that SQL file into the Postgres container init directory. Railway managed Postgres does not run repo migrations automatically.
 
 `railway/app/railway.json` therefore uses this app pre-deploy command:

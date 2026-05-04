@@ -60,6 +60,8 @@ LABEL org.opencontainers.image.licenses="MIT"
 
 # Prevent interactive prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
+ENV ARCHON_DOCKER=true
+ENV ARCHON_HOME=/.archon
 
 WORKDIR /app
 
@@ -161,6 +163,9 @@ COPY .archon/ ./.archon/
 COPY migrations/ ./migrations/
 COPY tsconfig*.json ./
 
+# Create an empty repo-root .env so Railway env vars remain the source of truth without noisy missing-file warnings
+RUN touch /app/.env
+
 # Fix permissions for appuser
 RUN chown -R appuser:appuser /app
 
@@ -179,7 +184,7 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Default port (matches .env.example PORT=3000)
-EXPOSE 3000
+# Default Railway/app port
+EXPOSE 8000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
