@@ -1,0 +1,52 @@
+{
+	auto_https off
+}
+
+:{$PORT} {
+	# Public paths bypass form auth for webhook delivery and health checks.
+	handle /webhooks/* {
+		reverse_proxy {$ARCHON_APP_PRIVATE_URL:http://archon-app.railway.internal:8000}
+	}
+
+	handle /api/health {
+		reverse_proxy {$ARCHON_APP_PRIVATE_URL:http://archon-app.railway.internal:8000}
+	}
+
+	# Login/logout are served by the private auth sidecar.
+	handle /login {
+		reverse_proxy {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:9000}
+	}
+
+	handle /logout {
+		reverse_proxy {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:9000}
+	}
+
+	# Default public surface: require auth, then proxy to the private app.
+	handle {
+		forward_auth {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:9000} {
+			uri /verify
+			copy_headers X-Auth-User
+		}
+
+		@sse path /api/stream/*
+		reverse_proxy @sse {$ARCHON_APP_PRIVATE_URL:http://archon-app.railway.internal:8000} {
+			flush_interval -1
+		}
+
+		reverse_proxy {$ARCHON_APP_PRIVATE_URL:http://archon-app.railway.internal:8000}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	encode gzip zstd
+
+	log {
+		output stdout
+		format console
+	}
+}

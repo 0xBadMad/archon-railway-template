@@ -54,7 +54,7 @@ ARCHON_DOCKER=true
 ARCHON_HOME=/.archon
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 HOST=::
-PORT=3090
+PORT=8000
 DEFAULT_AI_ASSISTANT=claude
 AUTH_USERNAME=admin
 AUTH_PASSWORD_HASH=<bcrypt hash>
@@ -98,7 +98,7 @@ COOKIE_MAX_AGE=86400
 Set these on `archon-caddy`:
 
 ```bash
-ARCHON_APP_PRIVATE_URL=http://archon-app.railway.internal:3090
+ARCHON_APP_PRIVATE_URL=http://archon-app.railway.internal:8000
 AUTH_SERVICE_PRIVATE_URL=http://archon-auth.railway.internal:9000
 ```
 
