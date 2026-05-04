@@ -2,6 +2,19 @@
 
 This directory contains a Railway-oriented deployment shape for Archon without changing the upstream Docker Compose defaults.
 
+
+## Docker Image Choice
+
+Do **not** use the docs-only CLI command as the Railway app service:
+
+```bash
+docker run --rm -v "$PWD:/workspace" ghcr.io/coleam00/archon:latest workflow list
+```
+
+That command is for running the published Archon CLI image against a local project mounted from your laptop. Railway cannot provide `$PWD:/workspace` as a bind mount.
+
+For this template, build `archon-app` from the repository `Dockerfile` instead. The app is self-contained, starts the web/server process via `docker-entrypoint.sh`, and stores managed repositories/worktrees under the persistent `/.archon` volume.
+
 ## Topology
 
 - `archon-caddy`: public HTTP service. Railway terminates TLS at the edge, then routes to Caddy on `$PORT`.
