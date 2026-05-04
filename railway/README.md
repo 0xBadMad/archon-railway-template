@@ -177,8 +177,8 @@ bun src/index.ts
 Before publishing this as a template:
 
 - `archon-app` deploy logs show the pre-deploy `psql` migration completed.
-- `archon-app` logs show `db.connection_postgresql_selected`, `database_connected`, and `server_listening` on port `3090`.
-- `archon-auth` logs show it is listening on `:9000`.
+- `archon-app` logs show `db.connection_postgresql_selected`, `database_connected`, and `server_listening` on port `8000`.
+- `archon-auth` logs show it is listening on `:8000`.
 - `archon-caddy` logs show it is listening on Railway `$PORT`.
 - `https://<caddy-domain>/api/health` returns JSON without login.
 - `https://<caddy-domain>/login` renders the form.

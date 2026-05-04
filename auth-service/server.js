@@ -143,6 +143,13 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost');
 
+
+    // GET /health — Railway/auth sidecar health check
+    if (req.method === 'GET' && url.pathname === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ ok: true }));
+    }
+
     // GET /verify — Caddy forward_auth calls this for every protected request
     if (req.method === 'GET' && url.pathname === '/verify') {
       const cookies = parseCookies(req.headers['cookie']);

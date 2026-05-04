@@ -12,6 +12,6 @@ COPY server.js ./
 # Run as non-root (node user is built-in in node:* images, UID 1000)
 USER node
 
-EXPOSE 9000
+EXPOSE 8000
 
 CMD ["node", "server.js"]
