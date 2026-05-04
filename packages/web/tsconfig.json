@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "bun-types"],
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@archon/core": ["../core/src"],
+      "@archon/core/*": ["../core/src/*"],
+      "@archon/workflows": ["../workflows/src"],
+      "@archon/workflows/*": ["../workflows/src/*"]
+    }
+  },
+  "include": ["src/**/*", "../workflows/src/defaults/text-imports.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

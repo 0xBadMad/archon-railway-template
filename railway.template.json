@@ -1,0 +1,74 @@
+{
+  "name": "Archon Railway Postgres Auth Template",
+  "description": "Railway-ready Archon topology with a public Caddy form-auth proxy, private Archon app, private auth-service, Railway managed Postgres, and persistent Archon data.",
+  "status": "draft-template-metadata",
+  "source": {
+    "upstream": "coleam00/Archon",
+    "notes": "This metadata documents the intended Railway template shape. Configure each service to use the listed configPath in Railway's service settings or template builder."
+  },
+  "services": [
+    {
+      "name": "archon-caddy",
+      "public": true,
+      "configPath": "/railway/caddy/railway.json",
+      "variables": {
+        "ARCHON_APP_PRIVATE_URL": "http://archon-app.railway.internal:3090",
+        "AUTH_SERVICE_PRIVATE_URL": "http://archon-auth.railway.internal:9000"
+      },
+      "publicNetworking": {
+        "targetPort": "${{PORT}}",
+        "healthcheckPath": "/api/health"
+      }
+    },
+    {
+      "name": "archon-app",
+      "public": false,
+      "configPath": "/railway/app/railway.json",
+      "volume": {
+        "name": "archon-data",
+        "mountPath": "/.archon"
+      },
+      "variables": {
+        "ARCHON_DOCKER": "true",
+        "ARCHON_HOME": "/.archon",
+        "DATABASE_URL": "${{Postgres.DATABASE_URL}}",
+        "HOST": "::",
+        "PORT": "3090",
+        "DEFAULT_AI_ASSISTANT": "claude",
+        "AUTH_USERNAME": "admin",
+        "AUTH_PASSWORD_HASH": "REPLACE_WITH_BCRYPT_HASH",
+        "COOKIE_SECRET": "${{secret(64)}}"
+      }
+    },
+    {
+      "name": "archon-auth",
+      "public": false,
+      "configPath": "/railway/auth-service/railway.json",
+      "variables": {
+        "AUTH_PORT": "9000",
+        "AUTH_USERNAME": "${{archon-app.AUTH_USERNAME}}",
+        "AUTH_PASSWORD_HASH": "${{archon-app.AUTH_PASSWORD_HASH}}",
+        "COOKIE_SECRET": "${{archon-app.COOKIE_SECRET}}",
+        "COOKIE_MAX_AGE": "86400"
+      }
+    },
+    {
+      "name": "Postgres",
+      "plugin": "postgresql",
+      "public": false
+    }
+  ],
+  "requiredUserVariables": [
+    "AUTH_USERNAME",
+    "AUTH_PASSWORD_HASH",
+    "COOKIE_SECRET",
+    "CLAUDE_CODE_OAUTH_TOKEN or CLAUDE_API_KEY or CODEX_ID_TOKEN/CODEX_ACCESS_TOKEN",
+    "Any platform adapter tokens you enable, such as GITHUB_TOKEN and WEBHOOK_SECRET"
+  ],
+  "manualSteps": [
+    "Create a volume named archon-data on the archon-app service and mount it at /.archon.",
+    "Expose only archon-caddy with a Railway public domain or custom domain.",
+    "Keep archon-app and archon-auth without public domains.",
+    "Verify the app pre-deploy migration succeeds before exposing traffic."
+  ]
+}

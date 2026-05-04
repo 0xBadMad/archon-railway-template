@@ -1,0 +1,78 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check bundled defaults
+        run: bun run check:bundled
+
+      - name: Type check
+        run: bun run type-check
+
+      - name: Lint
+        run: bun run lint --max-warnings 0
+
+      - name: Check formatting
+        run: bun run format:check
+
+      - name: Run tests
+        run: bun run test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: archon-ci:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test — container starts and serves /api/health
+        run: |
+          docker run -d --name archon-smoke -e PORT=3000 -e CLAUDE_USE_GLOBAL_AUTH=true -p 3000:3000 archon-ci:test
+          sleep 5
+          curl --fail --retry 10 --retry-delay 3 --retry-all-errors http://localhost:3000/api/health
+
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker logs archon-smoke 2>&1 || true
+
+      - name: Cleanup smoke test container
+        if: always()
+        run: docker rm -f archon-smoke || true
