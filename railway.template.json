@@ -13,7 +13,7 @@
       "configPath": "/railway/caddy/railway.json",
       "variables": {
         "ARCHON_APP_PRIVATE_URL": "http://archon-app.railway.internal:8000",
-        "AUTH_SERVICE_PRIVATE_URL": "http://archon-auth.railway.internal:9000"
+        "AUTH_SERVICE_PRIVATE_URL": "http://archon-auth.railway.internal:8000"
       },
       "publicNetworking": {
         "targetPort": "${{PORT}}",
@@ -45,7 +45,7 @@
       "public": false,
       "configPath": "/railway/auth-service/railway.json",
       "variables": {
-        "AUTH_PORT": "9000",
+        "PORT": "8000",
         "AUTH_USERNAME": "${{archon-app.AUTH_USERNAME}}",
         "AUTH_PASSWORD_HASH": "${{archon-app.AUTH_PASSWORD_HASH}}",
         "COOKIE_SECRET": "${{archon-app.COOKIE_SECRET}}",

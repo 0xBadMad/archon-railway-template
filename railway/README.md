@@ -87,8 +87,8 @@ Set these on `archon-auth`:
 
 
 ```bash
-AUTH_PORT=9000
-# AUTH_SERVICE_PORT=9000 also works, but AUTH_PORT is preferred on Railway.
+PORT=8000
+# AUTH_PORT=9000 / AUTH_SERVICE_PORT=9000 also work outside Railway; prefer PORT=8000 on Railway.
 AUTH_USERNAME=${{archon-app.AUTH_USERNAME}}
 AUTH_PASSWORD_HASH=${{archon-app.AUTH_PASSWORD_HASH}}
 COOKIE_SECRET=${{archon-app.COOKIE_SECRET}}
@@ -99,7 +99,7 @@ Set these on `archon-caddy`:
 
 ```bash
 ARCHON_APP_PRIVATE_URL=http://archon-app.railway.internal:8000
-AUTH_SERVICE_PRIVATE_URL=http://archon-auth.railway.internal:9000
+AUTH_SERVICE_PRIVATE_URL=http://archon-auth.railway.internal:8000
 ```
 
 If you rename services, update the `*.railway.internal` hostnames.

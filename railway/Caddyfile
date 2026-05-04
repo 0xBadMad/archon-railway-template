@@ -14,16 +14,16 @@
 
 	# Login/logout are served by the private auth sidecar.
 	handle /login {
-		reverse_proxy {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:9000}
+		reverse_proxy {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:8000}
 	}
 
 	handle /logout {
-		reverse_proxy {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:9000}
+		reverse_proxy {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:8000}
 	}
 
 	# Default public surface: require auth, then proxy to the private app.
 	handle {
-		forward_auth {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:9000} {
+		forward_auth {$AUTH_SERVICE_PRIVATE_URL:http://archon-auth.railway.internal:8000} {
 			uri /verify
 			copy_headers X-Auth-User
 		}
