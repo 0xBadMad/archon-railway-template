@@ -5,7 +5,7 @@
   },
   "deploy": {
     "preDeployCommand": [
-      "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f migrations/000_combined.sql"
+      "sh -lc 'test -n \"$DATABASE_URL\" || { echo DATABASE_URL is required on archon-app; exit 1; }; psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f migrations/000_combined.sql'"
     ],
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 120,
