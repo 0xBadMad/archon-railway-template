@@ -106,7 +106,7 @@ If you rename services, update the `*.railway.internal` hostnames.
 
 ## Auth Setup
 
-Generate a bcrypt password hash locally. Do not commit it:
+Generate a bcrypt password hash locally. Do not commit it. Docker Compose is not required; this one-off Node container is enough:
 
 ```bash
 docker run --rm node:22-alpine sh -lc "npm add bcryptjs >/dev/null && node -e \"require('bcryptjs').hash(process.argv[1], 12).then(console.log)\" 'YOUR_PASSWORD'"
@@ -114,9 +114,11 @@ docker run --rm node:22-alpine sh -lc "npm add bcryptjs >/dev/null && node -e \"
 
 Set the resulting hash directly as `AUTH_PASSWORD_HASH` in Railway. Do not double `$` characters in Railway variables; that escaping is only for Docker Compose env interpolation.
 
-Generate a cookie secret locally:
+Generate a cookie secret locally with either command:
 
 ```bash
+docker run --rm node:22-alpine node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# or
 openssl rand -hex 32
 ```
 
